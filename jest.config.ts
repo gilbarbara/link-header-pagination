@@ -19,6 +19,9 @@ module.exports = {
   moduleDirectories: ['node_modules', 'src', './'],
   moduleFileExtensions: ['js', 'ts'],
   preset: 'ts-jest',
+  snapshotFormat: {
+    printBasicPrototype: false,
+  },
   testRegex: '/test/.*?\\.(test|spec)\\.ts$',
   testEnvironment: 'jsdom',
   verbose: false,
