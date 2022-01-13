@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`linkHeaderPagination should work with { page: "1", perPage: "20", total: "0" } 1`] = `
+{
+  "X-Items-From": "",
+  "X-Items-Per-Page": "20",
+  "X-Items-To": "",
+  "X-Items-Total": "0",
+}
+`;
+
+exports[`linkHeaderPagination should work with { page: "1", perPage: "20", total: "40" } 1`] = `
+{
+  "Link": "</?page=1>; rel=\\"current\\", </?page=2>; rel=\\"next\\", </?page=2>; rel=\\"last\\"",
+  "X-Items-From": "1",
+  "X-Items-Per-Page": "20",
+  "X-Items-To": "20",
+  "X-Items-Total": "40",
+}
+`;
+
+exports[`linkHeaderPagination should work with { page: "1", perPage: "100", total: "100" } 1`] = `
+{
+  "Link": "</?page=1>; rel=\\"current\\"",
+  "X-Items-From": "1",
+  "X-Items-Per-Page": "100",
+  "X-Items-To": "100",
+  "X-Items-Total": "100",
+}
+`;
+
+exports[`linkHeaderPagination should work with { page: "2", perPage: "20", total: "40" } 1`] = `
+{
+  "Link": "</?page=2>; rel=\\"current\\", </?page=1>; rel=\\"first\\", </?page=1>; rel=\\"prev\\", <https://example.com/docs>; rel=\\"documentation\\"",
+  "X-Items-From": "21",
+  "X-Items-Per-Page": "20",
+  "X-Items-To": "40",
+  "X-Items-Total": "40",
+}
+`;
+
+exports[`linkHeaderPagination should work with { page: "2", perPage: "30", total: "40" } 1`] = `
+{
+  "Link": "</?page=2>; rel=\\"current\\", </?page=1>; rel=\\"first\\", </?page=1>; rel=\\"prev\\"",
+  "X-Items-From": "31",
+  "X-Items-Per-Page": "30",
+  "X-Items-To": "40",
+  "X-Items-Total": "40",
+}
+`;
+
+exports[`linkHeaderPagination should work with { page: "3", perPage: "12", total: "100" } 1`] = `
+{
+  "Link": "</?page=3>; rel=\\"current\\", </?page=1>; rel=\\"first\\", </?page=2>; rel=\\"prev\\", </?page=4>; rel=\\"next\\", </?page=9>; rel=\\"last\\"",
+  "X-Items-From": "25",
+  "X-Items-Per-Page": "12",
+  "X-Items-To": "36",
+  "X-Items-Total": "100",
+}
+`;
+
+exports[`linkHeaderPagination should work with { page: "10", perPage: "20", total: "24" } 1`] = `
+{
+  "Link": "</?page=10>; rel=\\"current\\", </?page=1>; rel=\\"first\\", </?page=2>; rel=\\"prev\\"",
+  "X-Items-From": "",
+  "X-Items-Per-Page": "20",
+  "X-Items-To": "",
+  "X-Items-Total": "24",
+}
+`;
