@@ -4,30 +4,61 @@ export interface LinkHeaderLinks {
 }
 
 export interface LinkHeaderPaginationOptions {
+  baseUrl?: string;
+  limit: number;
   links?: LinkHeaderLinks[];
   page: number;
-  perPage: number;
+  query?: Record<string, string | number | boolean>;
   total: number;
 }
 
-export default function linkHeaderPagination(options: LinkHeaderPaginationOptions) {
-  const { links, page, perPage, total } = options;
-  const headers: Record<string, string> = {};
+export interface LinkHeaderPaginationResult {
+  Link: string;
+  'X-Items-From': string;
+  'X-Items-Per-Page': string;
+  'X-Items-To': string;
+  'X-Items-Total': string;
+}
+
+export default function linkHeaderPagination(
+  options: LinkHeaderPaginationOptions,
+): LinkHeaderPaginationResult {
+  const { baseUrl = '/', limit, links, page, query = {}, total } = options;
+  const headers: Partial<LinkHeaderPaginationResult> = {};
   const headerLinks = [];
 
-  const last = Math.ceil(total / perPage);
+  // Build query string from query object
+  const queryParams = new URLSearchParams();
+
+  // Add page parameter separately since we'll modify it for different links
+  for (const [key, value] of Object.entries(query)) {
+    if (value !== undefined && value !== null) {
+      queryParams.append(key, String(value));
+    }
+  }
+
+  // Helper function to generate URL with page number
+  const getPageUrl = (pageNumber: number) => {
+    const params = new URLSearchParams(queryParams);
+
+    params.set('page', String(pageNumber));
+
+    return `${baseUrl}?${params.toString()}`;
+  };
+
+  const last = Math.ceil(total / limit);
   const previous = page - 1 < last ? page - 1 : last;
   const next = page + 1;
 
   if (last) {
-    headerLinks.push(`</?page=${page}>; rel="current"`);
+    headerLinks.push(`<${getPageUrl(page)}>; rel="current"`);
 
     if (previous > 0) {
-      headerLinks.push('</?page=1>; rel="first"', `</?page=${previous}>; rel="prev"`);
+      headerLinks.push(`<${getPageUrl(1)}>; rel="first"`, `<${getPageUrl(previous)}>; rel="prev"`);
     }
 
     if (next <= last) {
-      headerLinks.push(`</?page=${next}>; rel="next"`, `</?page=${last}>; rel="last"`);
+      headerLinks.push(`<${getPageUrl(next)}>; rel="next"`, `<${getPageUrl(last)}>; rel="last"`);
     }
   }
 
@@ -41,8 +72,8 @@ export default function linkHeaderPagination(options: LinkHeaderPaginationOption
     headers.Link = headerLinks.join(', ');
   }
 
-  let from: string | number = (page - 1) * perPage + 1;
-  let to = page * perPage;
+  let from: string | number = (page - 1) * limit + 1;
+  let to = page * limit;
 
   if (from > total || !total) {
     from = 0;
@@ -54,10 +85,10 @@ export default function linkHeaderPagination(options: LinkHeaderPaginationOption
     to = total;
   }
 
-  headers['X-Items-From'] = `${from || ''}`;
-  headers['X-Items-Per-Page'] = `${perPage}`;
-  headers['X-Items-To'] = `${to || ''}`;
+  headers['X-Items-From'] = `${from || '0'}`;
+  headers['X-Items-Per-Page'] = `${limit}`;
+  headers['X-Items-To'] = `${to || '0'}`;
   headers['X-Items-Total'] = `${total}`;
 
-  return headers;
+  return headers as LinkHeaderPaginationResult;
 }
